@@ -6,6 +6,7 @@ export const competitionRouter = router({
     .input(
       z.object({
         name: z.string(),
+        userId: z.string(),
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -13,6 +14,7 @@ export const competitionRouter = router({
         await ctx.prisma.competition.create({
           data: {
             name: input.name,
+            userId: input.userId,
           },
         });
       } catch (error) {
