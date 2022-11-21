@@ -64,3 +64,9 @@ model VerificationToken {
 
   @@unique([identifier, token])
 }
+
+model Competition {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  name      String
+}
