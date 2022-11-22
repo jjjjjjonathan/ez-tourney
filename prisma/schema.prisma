@@ -50,6 +50,7 @@ model User {
   accounts      Account[]
   sessions      Session[]
   competitions  Competition[]
+  Competitor    Competitor[]
 }
 
 model VerificationToken {
@@ -61,9 +62,28 @@ model VerificationToken {
 }
 
 model Competition {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  name      String
-  userId    String
-  user      User    @relation(fields: [userId], references: [id])
+  id                      Int                       @id @default(autoincrement())
+  createdAt               DateTime                  @default(now())
+  name                    String
+  userId                  String
+  user                    User                      @relation(fields: [userId], references: [id])
+  CompetitorInCompetition CompetitorInCompetition[]
+}
+
+model Competitor {
+  id                      Int                       @id @default(autoincrement())
+  createdAt               DateTime                  @default(now())
+  name                    String
+  userId                  String
+  CompetitorInCompetition CompetitorInCompetition[]
+  user                    User                      @relation(fields: [userId], references: [id])
+}
+
+model CompetitorInCompetition {
+  id            Int         @id @default(autoincrement())
+  createdAt     DateTime    @default(now())
+  competitorId  Int
+  competitionId Int
+  competitor    Competitor  @relation(fields: [competitorId], references: [id])
+  competition   Competition @relation(fields: [competitionId], references: [id])
 }
