@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { router, protectedProcedure, publicProcedure } from "../trpc";
+import { router, protectedProcedure } from "../trpc";
 
 export const competitionRouter = router({
   createCompetition: protectedProcedure
@@ -21,18 +21,27 @@ export const competitionRouter = router({
         console.log(error);
       }
     }),
-  getAll: publicProcedure.query(async ({ ctx }) => {
-    try {
-      return await ctx.prisma.competition.findMany({
-        select: {
-          name: true,
-        },
-        orderBy: {
-          createdAt: "desc",
-        },
-      });
-    } catch (error) {
-      console.log("error", error);
-    }
-  }),
+  getUserCompetitions: protectedProcedure
+    .input(
+      z.object({
+        userId: z.string(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      try {
+        return await ctx.prisma.competition.findMany({
+          select: {
+            name: true,
+          },
+          where: {
+            userId: input.userId,
+          },
+          orderBy: {
+            createdAt: "desc",
+          },
+        });
+      } catch (error) {
+        console.log("error", error);
+      }
+    }),
 });

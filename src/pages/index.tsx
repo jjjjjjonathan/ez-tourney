@@ -3,8 +3,9 @@ import { trpc } from "../utils/trpc";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { useState } from "react";
 
-const Competitions = () => {
-  const { data: competitions, isLoading } = trpc.competition.getAll.useQuery();
+const Competitions = ({ userId }: { userId: string }) => {
+  const { data: competitions, isLoading } =
+    trpc.competition.getUserCompetitions.useQuery({ userId });
 
   if (isLoading) return <div>Fetching competitions, just wait!</div>;
 
@@ -27,16 +28,17 @@ const Form = () => {
   const postCompetition = trpc.competition.createCompetition.useMutation({
     onMutate: () => {
       onMutate: () => {
-        utils.competition.getAll.cancel();
-        const optimisticUpdate = utils.competition.getAll.getData();
+        utils.competition.getUserCompetitions.cancel();
+        const optimisticUpdate =
+          utils.competition.getUserCompetitions.getData();
 
         if (optimisticUpdate) {
-          utils.competition.getAll.setData(optimisticUpdate);
+          utils.competition.getUserCompetitions.setData(optimisticUpdate);
         }
       };
     },
     onSettled: () => {
-      utils.competition.getAll.invalidate();
+      utils.competition.getUserCompetitions.invalidate();
     },
   });
 
@@ -85,13 +87,13 @@ const Home: NextPage = () => {
             <p>hi {session.user?.name}</p>
             <Form />
             <button onClick={() => signOut()}>logout</button>
+            <div>
+              <Competitions userId={session.user?.id || ""} />
+            </div>
           </>
         ) : (
           <button onClick={() => signIn("discord")}>login with discord</button>
         )}
-        <div>
-          <Competitions />
-        </div>
       </div>
     </main>
   );
