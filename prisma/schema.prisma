@@ -67,7 +67,7 @@ model VerificationToken {
 }
 
 model Competition {
-  id        String   @id @default(cuid())
+  id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   name      String
   userId    String?
