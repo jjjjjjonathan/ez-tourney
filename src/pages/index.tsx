@@ -1,7 +1,8 @@
-import { type NextPage } from "next";
-import { trpc } from "../utils/trpc";
-import { signIn, signOut, useSession } from "next-auth/react";
-import { useState } from "react";
+import { type NextPage } from 'next';
+import { trpc } from '../utils/trpc';
+import { signIn, signOut, useSession } from 'next-auth/react';
+import { useState } from 'react';
+import Link from 'next/link';
 
 const Competitions = ({ userId }: { userId: string }) => {
   const { data: competitions, isLoading } =
@@ -14,7 +15,9 @@ const Competitions = ({ userId }: { userId: string }) => {
       {competitions?.map((competition, index) => {
         return (
           <div key={index}>
-            <p>{competition.name}</p>
+            <Link href={`/competition/${competition.id}`}>
+              {competition.name}
+            </Link>
           </div>
         );
       })}
@@ -23,7 +26,7 @@ const Competitions = ({ userId }: { userId: string }) => {
 };
 
 const Form = () => {
-  const [name, setName] = useState("");
+  const [name, setName] = useState('');
   const utils = trpc.useContext();
   const postCompetition = trpc.competition.createCompetition.useMutation({
     onMutate: () => {
@@ -54,7 +57,7 @@ const Form = () => {
             userId: session.user?.id as string,
           });
         }
-        setName("");
+        setName('');
       }}
     >
       <input
@@ -74,7 +77,7 @@ const Form = () => {
 const Home: NextPage = () => {
   const { data: session, status } = useSession();
 
-  if (status === "loading") {
+  if (status === 'loading') {
     return <main>Loading...</main>;
   }
 
@@ -88,11 +91,11 @@ const Home: NextPage = () => {
             <Form />
             <button onClick={() => signOut()}>logout</button>
             <div>
-              <Competitions userId={session.user?.id || ""} />
+              <Competitions userId={session.user?.id || ''} />
             </div>
           </>
         ) : (
-          <button onClick={() => signIn("discord")}>login with discord</button>
+          <button onClick={() => signIn('discord')}>login with discord</button>
         )}
       </div>
     </main>
